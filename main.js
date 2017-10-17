@@ -4,6 +4,8 @@ const app = electron.app
 // Module to create native browser window.
 const BrowserWindow = electron.BrowserWindow
 
+require('electron-debug')({showDevTools: true});
+
 const path = require('path')
 const url = require('url')
 
@@ -21,6 +23,19 @@ function createWindow () {
     protocol: 'file:',
     slashes: true
   }))
+
+  const clipboard = require('electron').clipboard;
+  clipboard.writeText('Example String');
+  clipboardWatch()
+
+  function clipboardWatch() {
+    let cur_clipboard = clipboard.readText();
+
+    setInterval(() => {
+      let new_clip = clipboard.readText();
+        console.log(new_clip);
+    }, 500);
+  }
 
   // Open the DevTools.
   // mainWindow.webContents.openDevTools()
