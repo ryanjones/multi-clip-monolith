@@ -32,7 +32,6 @@ function createWindow () {
   function clipboardWatch() {
     setInterval(() => {
       let new_clip = clipboard.readText();
-        console.log(new_clip);
     }, 500);
   }
 
@@ -83,8 +82,19 @@ app.on('activate', function () {
 let ipcMain = require('electron').ipcMain;
 
 ipcMain.on('asynchronous-message', (event, arg) => {
-  console.log(arg)  // prints "ping"
+  console.log('received async')
   Menu.sendActionToFirstResponder('hide:');
-  robot.keyToggle('v', 'down', ['command']);
+  console.log('message should be copied, attempting to paste...')
+  setTimeout(function()
+  {
+    robot.keyToggle('v', 'down', ['command']);
+    setTimeout(function()
+    {
+      robot.keyToggle('v', 'up', ['command']);
+    }, 100);
+  }, 100);
+  
+  console.log('finished paste attempt...')
+
   event.sender.send('asynchronous-reply', 'pong')
 })
