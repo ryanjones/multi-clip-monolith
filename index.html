@@ -7,41 +7,73 @@
       const {ipcRenderer} = require('electron')
 
       document.addEventListener('DOMContentLoaded', function() {
-        let superButton = document.querySelector('.super-button');
-        superButton.addEventListener('click', function(){
-          var copyTextarea = document.querySelector('.super-button-text');
-          copyTextarea.select();
+        let superButtons = document.getElementsByClassName("super-button");
 
-          try {
-            var successful = document.execCommand('copy');
-            var msg = successful ? 'successful' : 'unsuccessful';
-            console.log('Copying text command was ' + msg);
-          } catch (err) {
-            console.log('Oops, unable to copy');
-          }
-          ipcRenderer.send('asynchronous-message', msg)
-        });
+        function addEvent(superButton){
+          superButton.addEventListener('click', function(){
+            copyTextToClipboard(superButton.innerText)
+            ipcRenderer.send('asynchronous-message', 'ping')
+          });
+        }
+        
+        for( i=0; i < superButtons.length ; i++){
+          addEvent(superButtons[i]);
+        }
+        
       }, false);
-
-
+      
       ipcRenderer.on('asynchronous-reply', (event, arg) => {
         console.log(arg) // prints "pong"
       })
+      
+      function copyTextToClipboard(text) {
+        var textArea = document.createElement("textarea");
 
+
+        // Place in top-left corner of screen regardless of scroll position.
+        textArea.style.position = 'fixed';
+        textArea.style.top = 0;
+        textArea.style.left = 0;
+
+        // Ensure it has a small width and height. Setting to 1px / 1em
+        // doesn't work as this gives a negative w/h on some browsers.
+        textArea.style.width = '2em';
+        textArea.style.height = '2em';
+
+        // We don't need padding, reducing the size if it does flash render.
+        textArea.style.padding = 0;
+
+        // Clean up any borders.
+        textArea.style.border = 'none';
+        textArea.style.outline = 'none';
+        textArea.style.boxShadow = 'none';
+        
+        // Avoid flash of white box if rendered for any reason.
+        textArea.style.background = 'transparent';
+        
+        textArea.value = text;
+
+        document.body.appendChild(textArea);
+
+        textArea.select();
+
+        try {
+          var successful = document.execCommand('copy');
+          var msg = successful ? 'successful' : 'unsuccessful';
+          console.log('Copying text command was ' + msg);
+        } catch (err) {
+          console.log('Oops, unable to copy');
+        }
+        
+        document.body.removeChild(textArea);
+      }
     </script>
+    
   </head>
   <body>
-  <p>
     <button type="button" class="super-button">Click Me!</button>
-    <textarea class="super-button-text">test string copy</textarea>
-  </p>
-  
-    
-    <h1>Hello World!</h1>
-    <!-- All of the Node.js APIs are available in this renderer process. -->
-    Waffles We are using Node.js <script>document.write(process.versions.node)</script>,
-    Chromium <script>document.write(process.versions.chrome)</script>,
-    and Electron <script>document.write(process.versions.electron)</script>.
+    <button type="button" class="super-button">Click Me! 5</button>
+    <button type="button" class="super-button">Click Me! 100</button>
 
     <script>
       // You can also require other files to run in this process
@@ -49,5 +81,4 @@
     </script>
   </body>
 </html>
-
 
