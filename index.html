@@ -3,8 +3,40 @@
   <head>
     <meta charset="UTF-8">
     <title>Hello World!</title>
+    <script type="text/javascript">
+      const {ipcRenderer} = require('electron')
+
+      document.addEventListener('DOMContentLoaded', function() {
+        let superButton = document.querySelector('.super-button');
+        superButton.addEventListener('click', function(){
+          var copyTextarea = document.querySelector('.super-button-text');
+          copyTextarea.select();
+
+          try {
+            var successful = document.execCommand('copy');
+            var msg = successful ? 'successful' : 'unsuccessful';
+            console.log('Copying text command was ' + msg);
+          } catch (err) {
+            console.log('Oops, unable to copy');
+          }
+          ipcRenderer.send('asynchronous-message', msg)
+        });
+      }, false);
+
+
+      ipcRenderer.on('asynchronous-reply', (event, arg) => {
+        console.log(arg) // prints "pong"
+      })
+
+    </script>
   </head>
   <body>
+  <p>
+    <button type="button" class="super-button">Click Me!</button>
+    <textarea class="super-button-text">Hello I'm some text1115</textarea>
+  </p>
+  
+    
     <h1>Hello World!</h1>
     <!-- All of the Node.js APIs are available in this renderer process. -->
     Waffles We are using Node.js <script>document.write(process.versions.node)</script>,

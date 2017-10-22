@@ -1,10 +1,12 @@
 const electron = require('electron')
+const {globalShortcut} = require('electron')
 // Module to control application life.
 const app = electron.app
 // Module to create native browser window.
 const BrowserWindow = electron.BrowserWindow
+const robot = require("robotjs");
+const {Menu} = require('electron')
 
-require('electron-debug')({showDevTools: true});
 
 const path = require('path')
 const url = require('url')
@@ -15,7 +17,7 @@ let mainWindow
 
 function createWindow () {
   // Create the browser window.
-  mainWindow = new BrowserWindow({width: 800, height: 600})
+  mainWindow = new BrowserWindow({width: 600, height: 600})
 
   // and load the index.html of the app.
   mainWindow.loadURL(url.format({
@@ -25,12 +27,9 @@ function createWindow () {
   }))
 
   const clipboard = require('electron').clipboard;
-  clipboard.writeText('Example String');
   clipboardWatch()
 
   function clipboardWatch() {
-    let cur_clipboard = clipboard.readText();
-
     setInterval(() => {
       let new_clip = clipboard.readText();
         console.log(new_clip);
@@ -38,7 +37,7 @@ function createWindow () {
   }
 
   // Open the DevTools.
-  // mainWindow.webContents.openDevTools()
+  mainWindow.webContents.openDevTools()
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {
@@ -53,6 +52,13 @@ function createWindow () {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', createWindow)
+
+app.on('ready', () => {
+  globalShortcut.register('Shift+CmdOrCtrl+1', () => {
+    let mouse = robot.getMousePos();
+    mainWindow.setPosition(mouse.x, mouse.y);
+  })
+})
 
 // Quit when all windows are closed.
 app.on('window-all-closed', function () {
@@ -73,3 +79,12 @@ app.on('activate', function () {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
+
+let ipcMain = require('electron').ipcMain;
+
+ipcMain.on('asynchronous-message', (event, arg) => {
+  console.log(arg)  // prints "ping"
+  Menu.sendActionToFirstResponder('hide:');
+  robot.keyToggle('v', 'down', ['command']);
+  event.sender.send('asynchronous-reply', 'pong')
+})
