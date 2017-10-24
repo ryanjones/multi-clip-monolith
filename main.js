@@ -1,10 +1,10 @@
 const electron = require('electron')
-const {globalShortcut} = require('electron')
 const app = electron.app
 const BrowserWindow = electron.BrowserWindow
 const robot = require("robotjs");
-const {Menu} = require('electron')
-
+const {Menu, globalShortcut} = require('electron')
+const Store = require('electron-store');
+var store = new Store();
 
 const path = require('path')
 const url = require('url')
@@ -25,7 +25,8 @@ function createWindow () {
 
   function clipboardWatch() {
     setInterval(() => {
-      clipboard.readText();
+      clip = clipboard.readText();
+      storeClipboardHistory(clip);
     }, 500);
   }
   mainWindow.webContents.openDevTools()
@@ -38,6 +39,7 @@ function createWindow () {
 app.on('ready', createWindow)
 app.on('ready', () => {
   globalShortcut.register('Shift+CmdOrCtrl+1', () => {
+    mainWindow.send('grab-pastes', store.get('clipHistory'))
     let mouse = robot.getMousePos();
     mainWindow.setPosition(mouse.x, mouse.y);
     mainWindow.show()
@@ -78,3 +80,17 @@ ipcMain.on('asynchronous-message', (event, arg) => {
   mainWindow.hide();
 })
 
+var storeClipboardHistory = clip => {
+  if(store.has('clipHistory')) {
+    history = store.get('clipHistory')
+  }
+  else {
+    history = []
+  }
+  
+  if (!(clip === history[0])) {
+    history = [clip, ...history.slice(0, 9)]
+    store.set('clipHistory', history);
+    console.log('stored ' + clip )
+  }
+}

@@ -6,7 +6,35 @@
     <script type="text/javascript">
       const {ipcRenderer} = require('electron')
 
-      document.addEventListener('DOMContentLoaded', function() {
+      ipcRenderer.on('grab-pastes', (event, pasteArray) => {
+        document.getElementById("button-list").innerHTML = "";
+        console.log(pasteArray)
+        setupButtons(pasteArray);
+        setupButtonEvents()
+      })
+      
+      
+
+      ipcRenderer.on('asynchronous-reply', (event, arg) => {
+        console.log(arg) // prints "pong"
+      })
+      
+      function setupButtons(pasteArray) {
+        console.log('paste array')
+        console.log(pasteArray)
+        pasteArray.forEach(function(element) {
+          console.log(element);
+          let button = document.createElement("button");
+          button.innerHTML = element;
+          button.className = 'super-button';
+
+          let buttonList = document.getElementById("button-list");
+          buttonList.appendChild(button);
+        });
+        
+      }
+
+      function setupButtonEvents() {
         let superButtons = document.getElementsByClassName("super-button");
 
         function addEvent(superButton){
@@ -15,17 +43,15 @@
             ipcRenderer.send('asynchronous-message', 'ping')
           });
         }
-        
+
         for( i=0; i < superButtons.length ; i++){
           addEvent(superButtons[i]);
         }
-        
-      }, false);
+      }
+
+      // helpers
       
-      ipcRenderer.on('asynchronous-reply', (event, arg) => {
-        console.log(arg) // prints "pong"
-      })
-      
+
       function copyTextToClipboard(text) {
         var textArea = document.createElement("textarea");
 
@@ -67,14 +93,18 @@
         
         document.body.removeChild(textArea);
       }
+      
+      
     </script>
     
   </head>
   <body>
-    <button type="button" class="super-button">Click Me!</button>
-    <button type="button" class="super-button">Click Me! 5</button>
-    <button type="button" class="super-button">Click Me! 100</button>
-
+    <div id="button-list">
+      <!--<button type="button" class="super-button">Click Me!</button>-->
+      <!--<button type="button" class="super-button">Click Me! 5</button>-->
+      <!--<button type="button" class="super-button">Click Me! 100</button>-->
+    </div>
+    
     <script>
       // You can also require other files to run in this process
       require('./renderer.js')
