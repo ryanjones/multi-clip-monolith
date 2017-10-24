@@ -11,9 +11,18 @@ const url = require('url')
 
 let mainWindow
 
-function createWindow () {
-  mainWindow = new BrowserWindow({width: 600, height: 600})
-
+function createWindow() {
+  mainWindow = new BrowserWindow({width: 600, height: 600, show: false})
+  
+  mainWindow.webContents.on('dom-ready', function () {
+    console.log('dom ready')
+    refreshClipBoard()
+  })
+  mainWindow.on('hide', function () {
+    console.log('hide')
+    refreshClipBoard()
+  })
+  
   mainWindow.loadURL(url.format({
     pathname: path.join(__dirname, 'index.html'),
     protocol: 'file:',
@@ -29,22 +38,36 @@ function createWindow () {
       storeClipboardHistory(clip);
     }, 500);
   }
-  mainWindow.webContents.openDevTools()
+  //mainWindow.webContents.openDevTools()
 
   mainWindow.on('closed', function () {
     mainWindow = null
   })
+  
+  mainWindow.on('blur', function () {
+    mainWindow.hide();
+  })
+}
+
+function refreshClipBoard() {
+  mainWindow.send('grab-pastes', store.get('clipHistory'))
 }
 
 app.on('ready', createWindow)
 app.on('ready', () => {
   globalShortcut.register('Shift+CmdOrCtrl+1', () => {
+    console.log('shortcut')
+    if (mainWindow === null) {
+      createWindow()
+      mainWindow.send('ready-to-show', 'show')
+    }
+    
+    console.log('pastes')
     mainWindow.send('grab-pastes', store.get('clipHistory'))
     let mouse = robot.getMousePos();
     mainWindow.setPosition(mouse.x, mouse.y);
     mainWindow.show()
   })
-  mainWindow.hide();
 })
 
 app.on('window-all-closed', function () {
