@@ -6,9 +6,9 @@
     <script type="text/javascript">
       const {ipcRenderer} = require('electron')
 
-      window.onbeforeunload = (e) => {
-        e.returnValue = false;  // this will *prevent* the closing no matter what value is passed
-      };
+//      window.onbeforeunload = (e) => {
+//        e.returnValue = false;  // this will *prevent* the closing no matter what value is passed
+//      };
       
       ipcRenderer.on('grab-pastes', (event, pasteArray) => {
         document.getElementById("button-list").innerHTML = "";
@@ -98,13 +98,37 @@
       
       
     </script>
+
+    <style type="text/css">
+      button {
+        display: inline-block;
+        padding: 0px 0px;
+        font-size: 12px;
+        line-height: 1.8;
+        box-shadow: none;
+        border-radius: 0;
+        color: #fff;
+        background-color: #6496c8;
+        text-shadow: -1px 1px #417cb8;
+        border: none;
+        width: 200px;
+        margin: 0 0px 1px 0;
+        text-align:left;
+        padding-left:6px;
+      }
+
+      button:focus {
+        outline: none
+      }
+
+      body { 
+        margin:0;
+      }
+    </style>
     
   </head>
   <body>
     <div id="button-list">
-      <!--<button type="button" class="super-button">Click Me!</button>-->
-      <!--<button type="button" class="super-button">Click Me! 5</button>-->
-      <!--<button type="button" class="super-button">Click Me! 100</button>-->
     </div>
     
     <script>

@@ -12,7 +12,7 @@ const url = require('url')
 let mainWindow
 
 function createWindow() {
-  mainWindow = new BrowserWindow({width: 600, height: 600, show: false})
+  mainWindow = new BrowserWindow({width: 200, height: 300, show: false, frame: false})
   
   mainWindow.webContents.on('dom-ready', function () {
     console.log('dom ready')
@@ -62,6 +62,10 @@ app.on('ready', () => {
     mainWindow.setPosition(mouse.x, mouse.y);
     mainWindow.show()
   })
+
+  globalShortcut.register('Esc', () => {
+    mainWindow.hide()
+  })
 })
 
 app.on('window-all-closed', function () {
@@ -105,7 +109,8 @@ var storeClipboardHistory = clip => {
     history = []
   }
   
-  if (!(clip === history[0])) {
+  if (!(clip === history[0]) && clip.trim().length > 0) {
+    console.log(clip.length)
     history = [clip, ...history.slice(0, 9)]
     store.set('clipHistory', history);
     console.log('stored ' + clip )
