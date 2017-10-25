@@ -12,7 +12,7 @@ const url = require('url')
 let mainWindow
 
 function createWindow() {
-  mainWindow = new BrowserWindow({width: 200, height: 300, show: false, frame: false})
+  mainWindow = new BrowserWindow({width: 220, height: 240, show: false, frame: false})
   
   mainWindow.webContents.on('dom-ready', function () {
     console.log('dom ready')
