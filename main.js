@@ -58,7 +58,7 @@ function refreshClipBoard() {
 
 app.on('ready', createWindow);
 app.on('ready', () => {
-  globalShortcut.register('Shift+CmdOrCtrl+1', () => {
+  globalShortcut.register('Shift+CmdOrCtrl+v', () => {
     console.log('pastes');
     mainWindow.send('grab-pastes', store.get('clipHistory'));
     let mouse = robot.getMousePos();
