@@ -14,10 +14,8 @@
       });
       
       function setupButtons(pasteArray) {
-        console.log('paste array');
-        console.log(pasteArray);
+        console.log('setup buttons');
         pasteArray.forEach(function(element) {
-          console.log(element);
           let button = document.createElement("button");
           button.innerHTML = element;
           button.className = 'super-button';
@@ -25,7 +23,6 @@
           let buttonList = document.getElementById("button-list");
           buttonList.appendChild(button);
         });
-        
       }
 
       function setupButtonEvents() {
@@ -78,8 +75,8 @@
         textArea.select();
 
         try {
-          var successful = document.execCommand('copy');
-          var msg = successful ? 'successful' : 'unsuccessful';
+          let successful = document.execCommand('copy');
+          let msg = successful ? 'successful' : 'unsuccessful';
           console.log('Copying text command was ' + msg);
         } catch (err) {
           console.log('Oops, unable to copy');

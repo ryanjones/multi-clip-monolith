@@ -20,7 +20,7 @@ function createWindow() {
     frame: false});
 
   mainWindow.webContents.on('dom-ready', function() {
-    console.log('dom ready');
+    console.log('dom-ready');
     refreshClipBoard();
   });
   
@@ -52,7 +52,7 @@ function refreshClipBoard() {
 app.on('ready', createWindow);
 app.on('ready', () => {
   globalShortcut.register('Shift+CmdOrCtrl+v', () => {
-    console.log('pastes');
+    console.log('paste triggered');
     mainWindow.send('grab-pastes', store.get('clipHistory'));
     let mouse = robot.getMousePos();
     mainWindow.setPosition(mouse.x, mouse.y);
