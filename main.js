@@ -25,7 +25,6 @@ function createWindow() {
   });
   
   mainWindow.on('hide', function() {
-    console.log('hide');
     refreshClipBoard();
   });
 
@@ -79,20 +78,17 @@ app.on('activate', function() {
 
 let ipcMain = require('electron').ipcMain;
 
-ipcMain.on('asynchronous-message', (event, arg) => {
-  console.log('received async');
-  Menu.sendActionToFirstResponder('hide:');
-  console.log('message should be copied, attempting to paste...');
+ipcMain.on('paste', (event, arg) => {
+  if (process.platform === 'darwin') {
+    Menu.sendActionToFirstResponder('hide:');
+  }
+
   setTimeout(function() {
     robot.keyToggle('v', 'down', ['command']);
     setTimeout(function() {
       robot.keyToggle('v', 'up', ['command']);
     }, 100);
   }, 100);
-  
-  console.log('finished paste attempt...');
-
-  event.sender.send('asynchronous-reply', 'pong');
   mainWindow.hide();
 });
 

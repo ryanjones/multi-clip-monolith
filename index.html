@@ -4,22 +4,18 @@
     <meta charset="UTF-8">
     <title>Hello World!</title>
     <script type="text/javascript">
-      const {ipcRenderer} = require('electron')
+      const {ipcRenderer} = require('electron');
 
       ipcRenderer.on('grab-pastes', (event, pasteArray) => {
         document.getElementById("button-list").innerHTML = "";
-        console.log(pasteArray)
+        console.log(pasteArray);
         setupButtons(pasteArray);
         setupButtonEvents()
-      })
-      
-      ipcRenderer.on('asynchronous-reply', (event, arg) => {
-        console.log(arg) // prints "pong"
-      })
+      });
       
       function setupButtons(pasteArray) {
-        console.log('paste array')
-        console.log(pasteArray)
+        console.log('paste array');
+        console.log(pasteArray);
         pasteArray.forEach(function(element) {
           console.log(element);
           let button = document.createElement("button");
@@ -38,7 +34,7 @@
         function addEvent(superButton){
           superButton.addEventListener('click', function(){
             copyTextToClipboard(superButton.innerText)
-            ipcRenderer.send('asynchronous-message', 'ping')
+            ipcRenderer.send('paste', null)
           });
         }
 
