@@ -5,6 +5,8 @@ const robot = require('robotjs');
 const {Menu, globalShortcut} = require('electron');
 const Store = require('electron-store');
 let store = new Store();
+const MultiClipboard = require('./scripts/multi-clipboard.js').MultiClipboard;
+let multiClipboard = new MultiClipboard();
 
 const path = require('path');
 const url = require('url');
@@ -21,6 +23,7 @@ function createWindow() {
     console.log('dom ready');
     refreshClipBoard();
   });
+  
   mainWindow.on('hide', function() {
     console.log('hide');
     refreshClipBoard();
@@ -31,17 +34,8 @@ function createWindow() {
     protocol: 'file:',
     slashes: true,
   }));
-
-  const clipboard = require('electron').clipboard;
-  clipboardWatch();
-
-  function clipboardWatch() {
-    setInterval(() => {
-      clip = clipboard.readText();
-      storeClipboardHistory(clip);
-    }, 500);
-  }
-  // mainWindow.webContents.openDevTools()
+  
+  multiClipboard.watchClipboard(store, require('electron').clipboard);
 
   mainWindow.on('closed', function() {
     mainWindow = null;
@@ -102,17 +96,4 @@ ipcMain.on('asynchronous-message', (event, arg) => {
   mainWindow.hide();
 });
 
-let storeClipboardHistory = (clip) => {
-  if (store.has('clipHistory')) {
-    history = store.get('clipHistory');
-  } else {
-    history = [];
-  }
 
-  if (!(clip === history[0]) && clip.trim().length > 0) {
-    console.log(clip.length);
-    history = [clip, ...history.slice(0, 9)];
-    store.set('clipHistory', history);
-    console.log('stored ' + clip );
-  }
-};

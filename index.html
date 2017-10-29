@@ -6,10 +6,6 @@
     <script type="text/javascript">
       const {ipcRenderer} = require('electron')
 
-//      window.onbeforeunload = (e) => {
-//        e.returnValue = false;  // this will *prevent* the closing no matter what value is passed
-//      };
-      
       ipcRenderer.on('grab-pastes', (event, pasteArray) => {
         document.getElementById("button-list").innerHTML = "";
         console.log(pasteArray)
