@@ -3,17 +3,54 @@
   <head>
     <meta charset="UTF-8">
     <title>Hello World!</title>
+    <script type="text/javascript">
+      const {ipcRenderer} = require('electron');
+
+      ipcRenderer.on('grab-pastes', (event, pasteArray) => {
+        document.getElementById("button-list").innerHTML = "";
+        setupButtons(pasteArray);
+        setupButtonEvents()
+      });
+      
+      function setupButtons(pasteArray) {
+        console.log('setup buttons');
+        pasteArray.forEach(function(element) {
+          let button = document.createElement("button");
+          button.innerHTML = element;
+          button.className = 'clip-button';
+
+          let buttonList = document.getElementById("button-list");
+          buttonList.appendChild(button);
+        });
+      }
+
+      function setupButtonEvents() {
+        let superButtons = document.getElementsByClassName("clip-button");
+
+        function addEvent(superButton){
+          superButton.addEventListener('click', function(){
+            copyTextToClipboard(superButton.innerText);
+            ipcRenderer.send('paste', null)
+          });
+        }
+
+        for( i=0; i < superButtons.length ; i++){
+          addEvent(superButtons[i]);
+        }
+      }
+
+    </script>
+    <script src="./scripts/multi-clipboard-client.js"></script>
+    <link href="./css/multi-clipboard.css" rel="stylesheet" type="text/css">
   </head>
   <body>
-    <h1>Hello World!</h1>
-    <!-- All of the Node.js APIs are available in this renderer process. -->
-    Waffles We are using Node.js <script>document.write(process.versions.node)</script>,
-    Chromium <script>document.write(process.versions.chrome)</script>,
-    and Electron <script>document.write(process.versions.electron)</script>.
-
+    <div id="button-list">
+    </div>
+    
     <script>
       // You can also require other files to run in this process
       require('./renderer.js')
     </script>
   </body>
 </html>
+

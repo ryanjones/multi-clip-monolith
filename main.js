@@ -1,75 +1,95 @@
-const electron = require('electron')
-// Module to control application life.
-const app = electron.app
-// Module to create native browser window.
-const BrowserWindow = electron.BrowserWindow
+const electron = require('electron');
+const app = electron.app;
+const BrowserWindow = electron.BrowserWindow;
+const robot = require('robotjs');
+const {Menu, globalShortcut} = require('electron');
+const Store = require('electron-store');
+let store = new Store();
+const MultiClipboard = require('./scripts/multi-clipboard-server.js').MultiClipboard;
+let multiClipboard = new MultiClipboard();
 
-require('electron-debug')({showDevTools: true});
+const path = require('path');
+const url = require('url');
 
-const path = require('path')
-const url = require('url')
+let mainWindow;
 
-// Keep a global reference of the window object, if you don't, the window will
-// be closed automatically when the JavaScript object is garbage collected.
-let mainWindow
+function createWindow() {
+  mainWindow = new BrowserWindow({width: 220,
+    height: 240,
+    show: false,
+    frame: false});
 
-function createWindow () {
-  // Create the browser window.
-  mainWindow = new BrowserWindow({width: 800, height: 600})
+  mainWindow.webContents.on('dom-ready', function() {
+    console.log('dom-ready');
+    refreshClipBoard();
+  });
+  
+  mainWindow.on('hide', function() {
+    refreshClipBoard();
+  });
 
-  // and load the index.html of the app.
   mainWindow.loadURL(url.format({
     pathname: path.join(__dirname, 'index.html'),
     protocol: 'file:',
-    slashes: true
-  }))
+    slashes: true,
+  }));
+  
+  multiClipboard.watchClipboard(store, require('electron').clipboard);
 
-  const clipboard = require('electron').clipboard;
-  clipboard.writeText('Example String');
-  clipboardWatch()
+  mainWindow.on('closed', function() {
+    mainWindow = null;
+  });
 
-  function clipboardWatch() {
-    let cur_clipboard = clipboard.readText();
-
-    setInterval(() => {
-      let new_clip = clipboard.readText();
-        console.log(new_clip);
-    }, 500);
-  }
-
-  // Open the DevTools.
-  // mainWindow.webContents.openDevTools()
-
-  // Emitted when the window is closed.
-  mainWindow.on('closed', function () {
-    // Dereference the window object, usually you would store windows
-    // in an array if your app supports multi windows, this is the time
-    // when you should delete the corresponding element.
-    mainWindow = null
-  })
+  mainWindow.on('blur', function() {
+    mainWindow.hide();
+  });
 }
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
-app.on('ready', createWindow)
+function refreshClipBoard() {
+  mainWindow.send('grab-pastes', store.get('clipHistory'));
+}
 
-// Quit when all windows are closed.
-app.on('window-all-closed', function () {
-  // On OS X it is common for applications and their menu bar
-  // to stay active until the user quits explicitly with Cmd + Q
+app.on('ready', createWindow);
+app.on('ready', () => {
+  globalShortcut.register('Shift+CmdOrCtrl+v', () => {
+    console.log('paste triggered');
+    mainWindow.send('grab-pastes', store.get('clipHistory'));
+    let mouse = robot.getMousePos();
+    mainWindow.setPosition(mouse.x, mouse.y);
+    mainWindow.show();
+  });
+
+  globalShortcut.register('Esc', () => {
+    mainWindow.hide();
+  });
+});
+
+app.on('window-all-closed', function() {
   if (process.platform !== 'darwin') {
-    app.quit()
+    app.quit();
   }
-})
+});
 
-app.on('activate', function () {
-  // On OS X it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
+app.on('activate', function() {
   if (mainWindow === null) {
-    createWindow()
+    createWindow();
   }
-})
+});
 
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and require them here.
+let ipcMain = require('electron').ipcMain;
+
+ipcMain.on('paste', (event, arg) => {
+  if (process.platform === 'darwin') {
+    Menu.sendActionToFirstResponder('hide:');
+  }
+
+  setTimeout(function() {
+    robot.keyToggle('v', 'down', ['command']);
+    setTimeout(function() {
+      robot.keyToggle('v', 'up', ['command']);
+    }, 100);
+  }, 100);
+  mainWindow.hide();
+});
+
+
