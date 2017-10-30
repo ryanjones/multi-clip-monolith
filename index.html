@@ -8,7 +8,6 @@
 
       ipcRenderer.on('grab-pastes', (event, pasteArray) => {
         document.getElementById("button-list").innerHTML = "";
-        console.log(pasteArray);
         setupButtons(pasteArray);
         setupButtonEvents()
       });
@@ -18,7 +17,7 @@
         pasteArray.forEach(function(element) {
           let button = document.createElement("button");
           button.innerHTML = element;
-          button.className = 'super-button';
+          button.className = 'clip-button';
 
           let buttonList = document.getElementById("button-list");
           buttonList.appendChild(button);
@@ -26,11 +25,11 @@
       }
 
       function setupButtonEvents() {
-        let superButtons = document.getElementsByClassName("super-button");
+        let superButtons = document.getElementsByClassName("clip-button");
 
         function addEvent(superButton){
           superButton.addEventListener('click', function(){
-            copyTextToClipboard(superButton.innerText)
+            copyTextToClipboard(superButton.innerText);
             ipcRenderer.send('paste', null)
           });
         }
@@ -40,93 +39,9 @@
         }
       }
 
-      // helpers
-      
-
-      function copyTextToClipboard(text) {
-        var textArea = document.createElement("textarea");
-
-
-        // Place in top-left corner of screen regardless of scroll position.
-        textArea.style.position = 'fixed';
-        textArea.style.top = 0;
-        textArea.style.left = 0;
-
-        // Ensure it has a small width and height. Setting to 1px / 1em
-        // doesn't work as this gives a negative w/h on some browsers.
-        textArea.style.width = '2em';
-        textArea.style.height = '2em';
-
-        // We don't need padding, reducing the size if it does flash render.
-        textArea.style.padding = 0;
-
-        // Clean up any borders.
-        textArea.style.border = 'none';
-        textArea.style.outline = 'none';
-        textArea.style.boxShadow = 'none';
-        
-        // Avoid flash of white box if rendered for any reason.
-        textArea.style.background = 'transparent';
-        
-        textArea.value = text;
-
-        document.body.appendChild(textArea);
-
-        textArea.select();
-
-        try {
-          let successful = document.execCommand('copy');
-          let msg = successful ? 'successful' : 'unsuccessful';
-          console.log('Copying text command was ' + msg);
-        } catch (err) {
-          console.log('Oops, unable to copy');
-        }
-        
-        document.body.removeChild(textArea);
-      }
-      
-      
     </script>
-
-    <style type="text/css">
-      button {
-        display: inline-block;
-        padding: 0px 0px;
-        font-size: 12px;
-        line-height: 1.8;
-        border-radius: 0;
-        color: #000000;
-        background-color: #CCCCCC;
-        border: none;
-        width: 220px;
-        margin: 0 0px 1px 0;
-        text-align:left;
-        text-overflow: ellipsis;
-        overflow: hidden;
-        white-space: nowrap;
-        padding-left: 10px;
-      }
-
-      button:focus {
-        outline: none
-      }
-      button:active {
-        background: #b7b7b7;
-      }
-      button:hover {
-        background: #b7b7b7;
-      }
-
-      body { 
-        margin:0;
-        background-color: #CCCCCC;
-      }
-      
-      #button-list {
-        padding-top: 7px;
-      }
-    </style>
-    
+    <script src="./scripts/multi-clipboard-client.js"></script>
+    <link href="./css/multi-clipboard.css" rel="stylesheet" type="text/css">
   </head>
   <body>
     <div id="button-list">

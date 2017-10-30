@@ -5,7 +5,7 @@ const robot = require('robotjs');
 const {Menu, globalShortcut} = require('electron');
 const Store = require('electron-store');
 let store = new Store();
-const MultiClipboard = require('./scripts/multi-clipboard.js').MultiClipboard;
+const MultiClipboard = require('./scripts/multi-clipboard-server.js').MultiClipboard;
 let multiClipboard = new MultiClipboard();
 
 const path = require('path');

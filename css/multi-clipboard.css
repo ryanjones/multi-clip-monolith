@@ -1,0 +1,36 @@
+button {
+  display: inline-block;
+  padding: 0px 0px;
+  font-size: 12px;
+  line-height: 1.8;
+  border-radius: 0;
+  color: #000000;
+  background-color: #CCCCCC;
+  border: none;
+  width: 220px;
+  margin: 0 0px 1px 0;
+  text-align:left;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  padding-left: 10px;
+}
+
+button:focus {
+  outline: none
+}
+button:active {
+  background: #b7b7b7;
+}
+button:hover {
+  background: #b7b7b7;
+}
+
+body {
+  margin:0;
+  background-color: #CCCCCC;
+}
+
+#button-list {
+  padding-top: 7px;
+}
