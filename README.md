@@ -30,7 +30,7 @@ A minimalistic multi clip menu that works the same on both mac and windows.
   - ```$(npm bin)/electron-rebuild```
   - npm start
 
-** Support Devices **
+**Support Devices**
 
 - Surface Pro 3/4 - Windows 10 - 1709 - Display 150%
 - Macbook Air 2011 Sierra
@@ -38,3 +38,9 @@ A minimalistic multi clip menu that works the same on both mac and windows.
 ## License
 
 [(MIT)](LICENSE.md)
+
+## License support
+
+- clipboard icon - https://icons8.com/icon/5361/clipboard
+
+

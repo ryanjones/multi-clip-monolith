@@ -2,20 +2,23 @@ const electron = require('electron');
 const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
 const robot = require('robotjs');
-const {Menu, globalShortcut} = require('electron');
+const {Menu, globalShortcut, Tray} = require('electron');
 const Store = require('electron-store');
 let store = new Store();
 const MultiClipboard = require('./scripts/multi-clipboard-server.js').MultiClipboard;
 let multiClipboard = new MultiClipboard();
-
-
-if (process.platform === 'win32') {
-  app.commandLine.appendSwitch('high-dpi-support', 1)
-  app.commandLine.appendSwitch('force-device-scale-factor', 1)
-}
-
 const path = require('path');
 const url = require('url');
+const assetsDirectory = path.join(__dirname, 'icons');
+
+
+if (process.platform === 'darwin') {
+  app.dock.hide();
+}
+else if (process.platform === 'win32') {
+  app.commandLine.appendSwitch('high-dpi-support', 1);
+  app.commandLine.appendSwitch('force-device-scale-factor', 1);
+}
 
 let mainWindow;
 
@@ -75,6 +78,8 @@ app.on('ready', () => {
   globalShortcut.register('Esc', () => {
     mainWindow.hide();
   });
+
+  createTray();
 });
 
 app.on('window-all-closed', function() {
@@ -120,4 +125,24 @@ ipcMain.on('paste', (event, arg) => {
   }
 });
 
-
+function createTray() {
+  let trayImage;
+  
+  if (process.platform === 'win32') {
+    trayImage = path.join(assetsDirectory, 'win-clipboard.png');
+  }
+  else if (process.platform === 'darwin') {
+    trayImage = path.join(assetsDirectory, 'mac-clipboard.png');
+  }
+  
+  
+  tray = new Tray(trayImage);
+  const contextMenu = Menu.buildFromTemplate([
+    {label: 'Item1', type: 'radio'},
+    {label: 'Item2', type: 'radio'},
+    {label: 'Item3', type: 'radio', checked: true},
+    {label: 'Item4', type: 'radio'}
+  ])
+  tray.setToolTip('This is my application.');
+  tray.setContextMenu(contextMenu)
+}
