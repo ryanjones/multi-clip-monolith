@@ -27,13 +27,13 @@ A minimalistic multi clip menu that works the same on both mac and windows.
   - All dependencies should be setup at this point
   - Clone repo
   - npm install
-  - ```.\node_modules\.bin\electron-rebuild.cmd```
+  - ```$(npm bin)/electron-rebuild```
   - npm start
 
-**Known Issues**
+** Support Devices **
 
-  - Clip menu isn't positioned correctly on high DPI devices (validated on a Surface Pro 3/4 tablet, but suspect all high DPI devices)
-  - App broken on windows due to hiding the menu w/ mac specific function
+- Surface Pro 3/4 - Windows 10 - 1709 - Display 150%
+- Macbook Air 2011 Sierra
 
 ## License
 
