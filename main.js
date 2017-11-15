@@ -101,10 +101,10 @@ ipcMain.on('paste', (event, arg) => {
     Menu.sendActionToFirstResponder('hide:');
 
     setTimeout(function() {
-      console.log('down')
+      console.log('down');
       robot.keyToggle('v', 'down', ['command']);
       setTimeout(function() {
-        console.log('up')
+        console.log('up');
         robot.keyToggle('v', 'up', ['command']);
       }, 100);
     }, 100);
@@ -114,10 +114,10 @@ ipcMain.on('paste', (event, arg) => {
   if (process.platform === 'win32') {
     mainWindow.minimize();  
     setTimeout(function() {
-      console.log('down')
+      console.log('down');
       robot.keyToggle('v', 'down', ['control']);
       setTimeout(function() {
-        console.log('up')
+        console.log('up');
         robot.keyToggle('v', 'up', ['control']);
       }, 100);
     }, 100);
@@ -138,11 +138,10 @@ function createTray() {
   
   tray = new Tray(trayImage);
   const contextMenu = Menu.buildFromTemplate([
-    {label: 'Item1', type: 'radio'},
-    {label: 'Item2', type: 'radio'},
-    {label: 'Item3', type: 'radio', checked: true},
-    {label: 'Item4', type: 'radio'}
-  ])
-  tray.setToolTip('This is my application.');
+    { label: 'Quit', 
+      click: () => { app.quit(); }
+    }
+  ]);
+  tray.setToolTip('multi-clip-monolith');
   tray.setContextMenu(contextMenu)
 }
