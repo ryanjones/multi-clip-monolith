@@ -129,7 +129,7 @@ function createTray() {
   let trayImage;
   
   if (process.platform === 'win32') {
-    trayImage = path.join(assetsDirectory, 'win-clipboard.png');
+    trayImage = path.join(assetsDirectory, 'win-clipboard.ico');
   }
   else if (process.platform === 'darwin') {
     trayImage = path.join(assetsDirectory, 'mac-clipboard.png');
